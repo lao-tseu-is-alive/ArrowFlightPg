@@ -1,0 +1,468 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ArrowFlight microservice written in Golang",
+    "description": "OpenApi Specification for an API to interact with ArrowFlight, it allows you to expose your PostgresSQL data as Apache Arrow",
+    "contact": {
+      "name": "ArrowFlight API Team",
+      "url": "https://goeland.io",
+      "email": "arrow-flight-pg@goeland.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://arrow-flight-pg.goeland.io/"
+    }
+  ],
+  "paths": {
+    "/tables": {
+      "get": {
+        "summary": "List returns a list of db tables",
+        "description": "Returns the table in an array",
+        "operationId": "List",
+        "parameters": [
+          {
+            "name": "schema_name",
+            "in": "query",
+            "description": "schema_name to filter by the tables to return",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get List of tables response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TableList"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access token is missing or invalid"
+          },
+          "default": {
+            "description": "unexpected Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ]
+      }
+    },
+    "/tables/geojson": {
+      "get": {
+        "summary": "List returns a geoJson of tables found",
+        "description": "Returns the geoJson of the table selected by the givven parameters",
+        "operationId": "GeoJson",
+        "parameters": [
+          {
+            "name": "schema_name",
+            "in": "query",
+            "description": "schema_name to filter by the tables to return",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get List of table response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access token is missing or invalid"
+          },
+          "default": {
+            "description": "unexpected Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ]
+      }
+    },
+    "/table/count": {
+      "get": {
+        "summary": "Count returns the number of table based on search criterias",
+        "description": "Returns the number of tables found after filtering with passed criterias",
+        "operationId": "Count",
+        "parameters": [
+          {
+            "name": "schema_name",
+            "in": "query",
+            "description": "schema_name to filter by the tables to return",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get List of table response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access token is missing or invalid"
+          },
+          "default": {
+            "description": "unexpected Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ]
+      }
+    },
+    "/table/{tableId}": {
+      "get": {
+        "summary": "Get will retrieve in backend all information about a specific tableId",
+        "description": "Retrieve a specific table",
+        "operationId": "Get",
+        "parameters": [
+          {
+            "name": "tableId",
+            "in": "path",
+            "description": "Id of the table",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get table successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Table"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access token is missing or invalid"
+          },
+          "404": {
+            "description": "get tables response when tableId was not found"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ]
+      }
+    },
+    "/schemas": {
+      "get": {
+        "summary": "List returns a list of db schemas",
+        "description": "Returns the schemas in an array",
+        "operationId": "ListSchemas",
+        "responses": {
+          "200": {
+            "description": "get List of schemas response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access token is missing or invalid"
+          },
+          "default": {
+            "description": "unexpected Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Table": {
+        "required": [
+          "table_id",
+          "schema_name",
+          "table_name"
+        ],
+        "type": "object",
+        "properties": {
+          "table_id": {
+            "type": "integer",
+            "description": "Unique identifier for the table (OID)"
+          },
+          "schema_name": {
+            "type": "string",
+            "description": "Name of the schema containing the table"
+          },
+          "table_name": {
+            "type": "string",
+            "description": "Name of the table"
+          },
+          "row_count": {
+            "type": "number",
+            "format": "float",
+            "description": "Number of rows in the table"
+          },
+          "size_bytes": {
+            "type": "number",
+            "format": "float",
+            "description": "Total size of the table in bytes"
+          },
+          "table_type": {
+            "type": "string",
+            "enum": [
+              "r",
+              "v",
+              "t",
+              "m"
+            ],
+            "description": "Internal type of the table (r = regular table, v = view, t = TOAST table, m = materialized view)"
+          },
+          "table_type_name": {
+            "type": "string",
+            "enum": [
+              "table",
+              "view",
+              "TOAST table",
+              "materialized view"
+            ],
+            "description": "Human-readable type of the table"
+          },
+          "table_comment": {
+            "type": "string",
+            "nullable": true,
+            "description": "Comment associated with the table (if any)"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the column"
+                },
+                "data_type": {
+                  "type": "string",
+                  "description": "Data type of the column"
+                },
+                "is_nullable": {
+                  "type": "boolean",
+                  "description": "Whether the column is nullable"
+                }
+              },
+              "required": [
+                "name",
+                "data_type",
+                "is_nullable"
+              ]
+            }
+          },
+          "primary_key": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of columns that form the primary key"
+          },
+          "foreign_keys": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "column": {
+                  "type": "string",
+                  "description": "Name of the foreign key column"
+                },
+                "references": {
+                  "type": "object",
+                  "properties": {
+                    "schema": {
+                      "type": "string",
+                      "description": "Schema name of the referenced table"
+                    },
+                    "table": {
+                      "type": "string",
+                      "description": "Referenced table name"
+                    },
+                    "column": {
+                      "type": "string",
+                      "description": "Referenced column name"
+                    }
+                  },
+                  "required": [
+                    "schema",
+                    "table",
+                    "column"
+                  ]
+                }
+              },
+              "description": "Foreign key references"
+            }
+          },
+          "indexes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of indexes associated with the table"
+          }
+        }
+      },
+      "TableList": {
+        "required": [
+          "table_id",
+          "schema_name",
+          "table_name"
+        ],
+        "type": "object",
+        "properties": {
+          "table_id": {
+            "type": "number",
+            "format": "int32"
+          },
+          "schema_name": {
+            "type": "string",
+            "title": "db schema name"
+          },
+          "table_name": {
+            "type": "string",
+            "title": "db table name"
+          }
+        }
+      },
+      "Error": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "JsonWebToken": {
+        "required": [
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid"
+      }
+    },
+    "securitySchemes": {
+      "JWTAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
