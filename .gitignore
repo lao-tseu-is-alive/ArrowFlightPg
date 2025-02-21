@@ -26,3 +26,4 @@ go.work.sum
 
 # jetbrains project files
 .idea/
+/ArrowFlightPg.conf
