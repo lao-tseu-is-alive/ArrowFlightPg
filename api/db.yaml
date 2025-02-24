@@ -99,7 +99,6 @@ paths:
             application/json:
               schema:
                 type: integer
-                format: int32
         "401":
           description: Access token is missing or invalid
         default:
@@ -125,7 +124,6 @@ paths:
           explode: false
           schema:
             type: integer
-            format: int32
       responses:
         "200":
           description: get table successful response
@@ -278,7 +276,6 @@ components:
       properties:
         table_id:
           type: number
-          format: int32
         schema_name:
           type: string
           title: "db schema name"
@@ -294,7 +291,6 @@ components:
       properties:
         code:
           type: integer
-          format: int32
         message:
           type: string
     JsonWebToken:
