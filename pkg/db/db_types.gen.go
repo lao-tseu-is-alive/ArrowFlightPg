@@ -9,10 +9,10 @@ const (
 
 // Defines values for TableTableType.
 const (
-	M TableTableType = "m"
-	R TableTableType = "r"
-	T TableTableType = "t"
-	V TableTableType = "v"
+	TableTableTypeM TableTableType = "m"
+	TableTableTypeR TableTableType = "r"
+	TableTableTypeT TableTableType = "t"
+	TableTableTypeV TableTableType = "v"
 )
 
 // Defines values for TableTableTypeName.
@@ -21,6 +21,14 @@ const (
 	TableTableTypeNameTOASTTable       TableTableTypeName = "TOAST table"
 	TableTableTypeNameTable            TableTableTypeName = "table"
 	TableTableTypeNameView             TableTableTypeName = "view"
+)
+
+// Defines values for TableListTableType.
+const (
+	TableListTableTypeM TableListTableType = "m"
+	TableListTableTypeR TableListTableType = "r"
+	TableListTableTypeT TableListTableType = "t"
+	TableListTableTypeV TableListTableType = "v"
 )
 
 // Error defines model for Error.
@@ -95,10 +103,16 @@ type TableTableTypeName string
 
 // TableList defines model for TableList.
 type TableList struct {
-	SchemaName string  `json:"schema_name"`
-	TableId    float32 `json:"table_id"`
-	TableName  string  `json:"table_name"`
+	SchemaName string `json:"schema_name"`
+	TableId    int    `json:"table_id"`
+	TableName  string `json:"table_name"`
+
+	// TableType Internal type of the table (r = regular table, v = view, t = TOAST table, m = materialized view)
+	TableType TableListTableType `json:"table_type"`
 }
+
+// TableListTableType Internal type of the table (r = regular table, v = view, t = TOAST table, m = materialized view)
+type TableListTableType string
 
 // CountParams defines parameters for Count.
 type CountParams struct {
@@ -108,12 +122,6 @@ type CountParams struct {
 
 // ListParams defines parameters for List.
 type ListParams struct {
-	// SchemaName schema_name to filter by the tables to return
-	SchemaName *string `form:"schema_name,omitempty" json:"schema_name,omitempty"`
-}
-
-// GeoJsonParams defines parameters for GeoJson.
-type GeoJsonParams struct {
 	// SchemaName schema_name to filter by the tables to return
 	SchemaName *string `form:"schema_name,omitempty" json:"schema_name,omitempty"`
 }

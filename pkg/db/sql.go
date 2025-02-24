@@ -1,15 +1,15 @@
 package db
 
 const (
-	schema_table_info = `
+	tableGet = `
 WITH table_info AS (
     SELECT
-        c.oid AS table_oid,
+        c.oid::int AS table_oid,
         n.nspname AS schema_name,
         c.relname AS table_name,
         c.reltuples AS row_count,
         pg_total_relation_size(c.oid) AS size_bytes,
-        c.relkind AS table_type,
+        c.relkind::text AS table_type,
         CASE
             WHEN c.relkind = 'r' THEN 'table'
             WHEN c.relkind = 'v' THEN 'view'
@@ -22,7 +22,9 @@ WITH table_info AS (
         obj_description(c.oid, 'pg_class') AS table_comment  -- Retrieve table comment
     FROM pg_class c
              JOIN pg_namespace n ON n.oid = c.relnamespace
-    WHERE c.relkind IN ('r', 'v', 't', 'm')  -- r: table, v: view, t: TOAST table, m: materialized view
+    WHERE c.relkind IN ('r', 'v', 'm')  -- r: table, v: view, t: TOAST table, m: materialized view
+    AND n.nspname NOT IN ('pg_catalog', 'information_schema')
+	AND c.oid = $1
 ),
      column_info AS (
          SELECT
@@ -101,4 +103,20 @@ FROM table_info ti
 GROUP BY ti.schema_name, ti.table_name, ti.row_count, ti.size_bytes, ti.table_type, ti.table_type_name, ti.table_comment
 ORDER BY ti.schema_name, ti.table_name, ti.table_type_name;
 `
+	tablesCount = "SELECT COUNT(*) as num_tables FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('r', 'v', 'm') AND n.nspname NOT IN ('pg_catalog', 'information_schema')"
+	existTable  = "SELECT COUNT(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('r', 'v', 'm') AND n.nspname NOT IN ('pg_catalog', 'information_schema') AND c.oid = $1;"
+	tablesList  = `
+SELECT
+    c.oid::int AS table_id,
+    n.nspname AS schema_name,
+    c.relname AS table_name,
+    c.relkind::text AS table_type
+FROM pg_class c
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+WHERE c.relkind IN ('r', 'v', 'm') AND n.nspname NOT IN ('pg_catalog', 'information_schema') 
+`
+
+	schemasList = `SELECT  DISTINCT(n.nspname) as schema_name FROM pg_class c 
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+		WHERE c.relkind IN ('r', 'v', 'm') AND n.nspname NOT IN ('pg_catalog', 'information_schema') ORDER BY n.nspname`
 )

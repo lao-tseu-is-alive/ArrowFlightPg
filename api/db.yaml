@@ -46,37 +46,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
         - JWTAuth: [ ]
-  /tables/geojson:
-    get:
-      summary: List returns a geoJson of tables found
-      description: Returns the geoJson of the table selected by the givven parameters
-      operationId: GeoJson
-      parameters:
-        - name: schema_name
-          in: query
-          description: schema_name to filter by the tables to return
-          required: false
-          style: form
-          explode: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: get List of table response
-          content:
-            application/json:
-              schema:
-                type: string
-        "401":
-          description: Access token is missing or invalid
-        default:
-          description: unexpected Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - JWTAuth: [ ]
 
   /table/count:
     get:
@@ -272,17 +241,26 @@ components:
         - table_id
         - schema_name
         - table_name
+        - table_type
       type: object
       properties:
         table_id:
-          type: number
+          type: integer
         schema_name:
           type: string
           title: "db schema name"
         table_name:
           type: string
           title: "db table name"
-    
+        table_type:
+          type: string
+          title: "db table type"
+          enum:
+            - r
+            - v
+            - t
+            - m
+          description: Internal type of the table (r = regular table, v = view, t = TOAST table, m = materialized view)
     Error:
       required:
         - code

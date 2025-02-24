@@ -25,9 +25,6 @@ type ServerInterface interface {
 	// List returns a list of db tables
 	// (GET /tables)
 	List(ctx echo.Context, params ListParams) error
-	// List returns a geoJson of tables found
-	// (GET /tables/geojson)
-	GeoJson(ctx echo.Context, params GeoJsonParams) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -104,26 +101,6 @@ func (w *ServerInterfaceWrapper) List(ctx echo.Context) error {
 	return err
 }
 
-// GeoJson converts echo context to params.
-func (w *ServerInterfaceWrapper) GeoJson(ctx echo.Context) error {
-	var err error
-
-	ctx.Set(JWTAuthScopes, []string{})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GeoJsonParams
-	// ------------- Optional query parameter "schema_name" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "schema_name", ctx.QueryParams(), &params.SchemaName)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter schema_name: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GeoJson(ctx, params)
-	return err
-}
-
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
 // either of them for path registration
@@ -156,6 +133,5 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/table/count", wrapper.Count)
 	router.GET(baseURL+"/table/:tableId", wrapper.Get)
 	router.GET(baseURL+"/tables", wrapper.List)
-	router.GET(baseURL+"/tables/geojson", wrapper.GeoJson)
 
 }
