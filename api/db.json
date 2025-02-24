@@ -147,8 +147,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "integer",
-                  "format": "int32"
+                  "type": "integer"
                 }
               }
             }
@@ -188,8 +187,7 @@
             "style": "simple",
             "explode": false,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "integer"
             }
           }
         ],
@@ -411,8 +409,7 @@
         "type": "object",
         "properties": {
           "table_id": {
-            "type": "number",
-            "format": "int32"
+            "type": "number"
           },
           "schema_name": {
             "type": "string",
@@ -432,8 +429,7 @@
         "type": "object",
         "properties": {
           "code": {
-            "type": "integer",
-            "format": "int32"
+            "type": "integer"
           },
           "message": {
             "type": "string"
