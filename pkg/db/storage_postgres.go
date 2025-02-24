@@ -89,6 +89,22 @@ func (db *PGX) Get(id int) (*Table, error) {
 	return res, nil
 }
 
+// GetTableSchema will retrieve the schema of the table for the given schema name and table name
+func (db *PGX) GetTableSchema(schemaName string, tableName string) ([]ColumnInfo, error) {
+	db.log.Debug("trace : entering GetTableSchema(%v, %v)", schemaName, tableName)
+	var res []ColumnInfo
+	err := pgxscan.Select(context.Background(), db.Conn, &res, tableSchema, schemaName, tableName)
+	if err != nil {
+		db.log.Error(SelectFailedInNWithErrorE, "GetTableSchema", err)
+		return nil, err
+	}
+	if res == nil {
+		db.log.Info(FunctionNReturnedNoResults, "GetTableSchema")
+		return nil, pgx.ErrNoRows
+	}
+	return res, nil
+}
+
 // Exist returns true only if a table with the specified id exists in store.
 func (db *PGX) Exist(id int) bool {
 	db.log.Debug("trace : entering Exist(%v)", id)

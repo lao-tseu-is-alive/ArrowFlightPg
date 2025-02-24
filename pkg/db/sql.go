@@ -105,7 +105,8 @@ ORDER BY ti.schema_name, ti.table_name, ti.table_type_name;
 `
 	tablesCount = "SELECT COUNT(*) as num_tables FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('r', 'v', 'm') AND n.nspname NOT IN ('pg_catalog', 'information_schema')"
 	existTable  = "SELECT COUNT(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind IN ('r', 'v', 'm') AND n.nspname NOT IN ('pg_catalog', 'information_schema') AND c.oid = $1;"
-	tablesList  = `
+
+	tablesList = `
 SELECT
     c.oid::int AS table_id,
     n.nspname AS schema_name,
@@ -114,6 +115,15 @@ SELECT
 FROM pg_class c
          JOIN pg_namespace n ON n.oid = c.relnamespace
 WHERE c.relkind IN ('r', 'v', 'm') AND n.nspname NOT IN ('pg_catalog', 'information_schema') 
+`
+
+	tableSchema = `
+SELECT column_name as name, data_type, is_nullable::bool as nullable
+        FROM information_schema.columns
+        WHERE
+            table_schema = $1
+            AND table_name = $2
+ORDER BY ordinal_position;
 `
 
 	schemasList = `SELECT  DISTINCT(n.nspname) as schema_name FROM pg_class c 

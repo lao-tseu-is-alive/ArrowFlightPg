@@ -1,8 +1,9 @@
-package arrow
+package db2arrow
 
 import (
 	"fmt"
 	"github.com/apache/arrow/go/v18/arrow"
+	"github.com/lao-tseu-is-alive/ArrowFlightPg/pkg/db"
 )
 
 // MapDataType converts PostgresSQL data types to Apache Arrow data types.
@@ -35,4 +36,17 @@ func MapDataType(pgType string) (arrow.DataType, error) {
 	default:
 		return nil, fmt.Errorf("unsupported PostgreSQL data type: %s", pgType)
 	}
+}
+
+// MapToArrowSchema creates an Arrow schema from PostgresSQL column metadata.
+func MapToArrowSchema(columns []db.ColumnInfo) (*arrow.Schema, error) {
+	fields := make([]arrow.Field, len(columns))
+	for i, col := range columns {
+		dt, err := MapDataType(col.DataType)
+		if err != nil {
+			return nil, fmt.Errorf("failed to map column %s: %w", col.Name, err)
+		}
+		fields[i] = arrow.Field{Name: col.Name, Type: dt, Nullable: col.Nullable}
+	}
+	return arrow.NewSchema(fields, nil), nil
 }
