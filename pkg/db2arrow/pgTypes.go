@@ -42,11 +42,14 @@ func MapDataType(pgType string) (arrow.DataType, error) {
 func MapToArrowSchema(columns []db.ColumnInfo) (*arrow.Schema, error) {
 	fields := make([]arrow.Field, len(columns))
 	for i, col := range columns {
-		dt, err := MapDataType(col.DataType)
-		if err != nil {
-			return nil, fmt.Errorf("failed to map column %s: %w", col.Name, err)
+		// discard fields with unsupported data types
+		if col.DataType != "tsvector" && col.DataType != "USER-DEFINED" {
+			dt, err := MapDataType(col.DataType)
+			if err != nil {
+				return nil, fmt.Errorf("failed to map column %s: %w", col.Name, err)
+			}
+			fields[i] = arrow.Field{Name: col.Name, Type: dt, Nullable: col.Nullable}
 		}
-		fields[i] = arrow.Field{Name: col.Name, Type: dt, Nullable: col.Nullable}
 	}
 	return arrow.NewSchema(fields, nil), nil
 }

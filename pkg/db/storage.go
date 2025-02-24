@@ -19,6 +19,7 @@ type Storage interface {
 	Count(params CountParams) (int, error)
 	// ListSchemas returns the list of existing schemas.
 	ListSchemas() ([]string, error)
+	GetDb() database.DB
 }
 
 // ColumnInfo represents metadata about a table column.

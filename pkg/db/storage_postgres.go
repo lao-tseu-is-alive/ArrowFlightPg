@@ -162,3 +162,8 @@ func (db *PGX) ListSchemas() ([]string, error) {
 	}
 	return res, nil
 }
+
+// GetDb will return the database connection
+func (db *PGX) GetDb() database.DB {
+	return db.GetDb()
+}
