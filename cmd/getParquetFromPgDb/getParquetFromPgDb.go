@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"runtime"
+
 	"github.com/labstack/gommon/log"
 	"github.com/lao-tseu-is-alive/ArrowFlightPg/pkg/db"
 	"github.com/lao-tseu-is-alive/ArrowFlightPg/pkg/db2parquet"
@@ -11,8 +14,6 @@ import (
 	"github.com/lao-tseu-is-alive/go-cloud-k8s-common-libs/pkg/database"
 	"github.com/lao-tseu-is-alive/go-cloud-k8s-common-libs/pkg/golog"
 	"github.com/lao-tseu-is-alive/go-cloud-k8s-common-libs/pkg/tools"
-	"os"
-	"runtime"
 )
 
 const (

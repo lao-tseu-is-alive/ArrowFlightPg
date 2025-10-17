@@ -3,6 +3,9 @@ package db2parquet
 import (
 	"context"
 	"fmt"
+	"os"
+	"time"
+
 	"github.com/apache/arrow/go/v18/arrow"
 	"github.com/apache/arrow/go/v18/arrow/array"
 	"github.com/apache/arrow/go/v18/arrow/memory"
@@ -13,8 +16,6 @@ import (
 	"github.com/lao-tseu-is-alive/ArrowFlightPg/pkg/db"
 	"github.com/lao-tseu-is-alive/ArrowFlightPg/pkg/db2arrow"
 	"github.com/lao-tseu-is-alive/go-cloud-k8s-common-libs/pkg/golog"
-	"os"
-	"time"
 )
 
 // CreateParquetFileFromDbTable create a parquet file from a db schema and table
