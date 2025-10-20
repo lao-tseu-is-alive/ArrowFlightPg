@@ -87,6 +87,8 @@ func main() {
 				enc = "[PLAIN RLE_DICT]"
 			case "[PLAIN_DICTIONARY PLAIN RLE]":
 				enc = "[PLAIN_DICT RLE]"
+			case "[RLE_DICTIONARY PLAIN RLE]":
+				enc = "[RLE_DICT PLAIN RLE]"
 			default:
 
 			}
